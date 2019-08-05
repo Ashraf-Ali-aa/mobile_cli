@@ -1,139 +1,138 @@
-Разблочить экран
+Unlock screen
 sudo chmod -R 777 /var/db/lockdown/
 
-Снять лог
+Remove the log
 idevicesyslog
 flick log -a start -p ios -n <log name>  =>  flick log -a stop -p ios
 
-Список установленных приложений
-ideviceinstaller -l
+List of installed applications
+ideviceinstaller -u $UDID -l
 
-Удалить приложение
-ideviceinstaller --uninstall <app bundleId>
+Remove application
+ideviceinstaller -u $UDID --uninstall <app bundleId>
 
-Установить приложение
+Install the application
 ideviceinstaller -u $UDID -i <ipa path>
 
-Обновить приложение
+Update application
 ideviceinstaller -u $UDID -g <ipa path>
 
-Список подключенных девайсов
+List of connected devices
 idevice_id -l
 
-Инфа о девайсе
+Info about the device
 ideviceinfo
 
-Диагностика девайса
+Device Diagnostics
 idevicediagnostics diagnostics All
 
-Перезагрузить девайса
+Reboot device
 idevicediagnostics restart
+Change application version
+PlistBuddy -c "Set: CFBundleVersion $ BUILD_NUMBER" <infoPlist path>
 
-Изменить версию приложения
-PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" <infoPlist path>
-
-Вывести на экран infoPlist
+Display infoPlist
 PlistBuddy -c Print "<infoPlist path>"
 
-Проверка статуса ImageSignature и ImagePresent
+Checking the status of ImageSignature and ImagePresent
 ideviceimagemounter -l
 
-Вывести на экран бандл приложения
-osascript `id of app "Payload/$APP_NAME"`
+Display application bundle
+osascript `id of app" Payload / $ APP_NAME "`
 
-Запустить приложение
-idevicedebug run $BUNDLE_ID
+Launch the application
+idevicedebug run $ BUNDLE_ID
 
-Сделать скриншот
+Take a screenshot
 flick screenshot -p ios -n <scr name>
 
-Снять видео
-flick video -a start -p ios  => flick video -a stop -p ios -n <video name>
+Film a video
+flick video -a start -p ios => flick video -a stop -p ios -n <video name>
 
-Очистить лог симулятора
-cp /dev/null $CoreSimulatorFolder/$UDID/system.log
+Clear Simulator Log
+cp / dev / null $ CoreSimulatorFolder / $ UDID / system.log
 
-Запустить симулятор
+Run the simulator
 ios-sim start --devicetypeid <device package and name>
 
-Установить приложение на симуляторе
+Install the application on the simulator
 ios-sim install <application path> --devicetypeid <device type>
 xcrun simctl install booted <app path>
 xcrun simctl install <device> <app path>
 
-Запустить приложение на симуляторе
+Run the application on the simulator
 ios-sim launch <app path> --devicetypeid <device type>
 xcrun simctl launch booted <app identifier>
 xcrun simctl launch <device> <app identifier>
 
-Удалить приложение на симуляторе
+Delete the application on the simulator
 xcrun simctl uninstall booted <app identifier>
 xcrun simctl uninstall <device> <app identifier>
 
-
-Вывести на экран версию OS девайса
+Display the OS version of the device
 ideviceinfo -k ProductVersion
 
-Вывести на экран версию приложения
+Display version of the application
 ideviceinstaller -l | grep $BUNDLE_ID
 
-Форматирование .app в .ipa
+Formatting .app to .ipa
 mkdir Payload && mv <app path> Payload && zip -r <ipa path> Payload/
 
-iOS Инспектор
+iOS Inspector
 app-inspector -u <UDID>
 
-Запуск нескольких инстансов ios симуляторов
+Running multiple instances of ios simulators
 open -n /Applications/Xcode.app/Contents/Developer/Applications/Simulator.app/ --args -CurrentDeviceUDID '<device udid>'
 
-Запуск симулятора (если инстанс уже есть, ничего не происходит)
+Run the simulator (if the instance is already there, nothing happens)
 xcrun instruments -w "<UDID>" -s
 
-Информация о приложении в App Store
-- информация о текущей версии: http://itunes.apple.com/ru/lookup?id=<your_id>
-- информация о всех версиях: 	 https://itunes.apple.com/ru/rss/customerreviews/id=<your_id>/json
+App Store App Information
+- information about the current version: http://itunes.apple.com/en/lookup?id= <your_id>
+- information about all versions: https://itunes.apple.com/en/rss/customerreviews/id=<your_id>/json
 
-Вывести инфо о симуляторе
+Display simulator info
 xcrun instruments -s devices | grep <udid>
 
-Обновить idevicelib для ios10
+Update idevicelib for ios10
 brew install -v --HEAD --fresh --build-from-source libimobiledevice
 brew install -v --HEAD --fresh --build-from-source ios-deploy
 
-Парсер .plist
+Parser .plist
 PlistBuddy -c 'Print <your_value>' Info.plist
 
-Получить bundle_id приложения
+Get application bundle_id
 mdls -name kMDItemCFBundleIdentifier -r SomeApp.app
 /usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' /Applications/SomeApp.app/Info.plist
 
-Показать BuildSettings таргета
+Show BuildSettings Target
 xcodebuild -target <target> -configuration <configuration> -showBuildSettings
 
-Установить значение требуемого парамтера BuildSettings
-xcodebuild -target <target> -configuration <configuration> ${KEY}=<value>
+Set the value of the required parameter BuildSettings
+xcodebuild -target <target> -configuration <configuration> $ {KEY} = <value>
 
-Показать версию iOS
+Show iOS version
 ideviceinfo -u <udid> -k ProductVersion
 
-Отключить обновление на iOS
+Disable iOS update
 https://github.com/suisreaction/SUISReaction.github.io/blob/master/app/tvos10.mobileconfig
 
 xcodebuild -destination
 http://www.mokacoding.com/blog/xcodebuild-destination-options/
 
-Вывести путь до песочнецы конкретного симулятора
+Print the path to the sandboxes of a specific simulator
 xcrun simctl get_app_container <udid> <bundle_id>
 
-Дернуть диплинк на симуляторе
+Pull deeplink on simulator
 xcrun simctl openurl booted "https://www.example.com/content?id=2"
 
-XCUITest диплинки
-let url = "sms://"
-let safari = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
-safari.launch()
-waitElement(safari.buttons["URL"]).tap()
-safari.textFields["URL"].buttons.firstMatch.tap()
-safari.textFields["URL"].typeText(url)
-safari.buttons["Go"].tap()
-safari.buttons.element(matching: NSPredicate(format: "label like 'Открыть' OR label like 'Open'")).tap()
+XCUITest Diplinks
+let url = "sms: //"
+let safari = XCUIApplication (bundleIdentifier: "com.apple.mobilesafari")
+safari.launch ()
+waitElement (safari.buttons ["URL"]). tap ()
+safari.textFields ["URL"]. buttons.firstMatch.tap ()
+safari.textFields ["URL"]. typeText (url)
+safari.buttons ["Go"]. tap ()
+safari.buttons.element (matching: NSPredicate (format: "label like 'Open' OR label like 'Open'")). tap ()
+
